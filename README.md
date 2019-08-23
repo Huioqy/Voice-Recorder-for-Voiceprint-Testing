@@ -10,8 +10,6 @@ https://www.docker.com/products/docker-desktop
 
 Use Terminal (or cmd on Windows) and cd to the root path of this folder.
 
-Run
-
         docker-compose up
 
 Then use Chrome to browse https://0.0.0.0:8443.
@@ -28,7 +26,7 @@ The code of the webpage is in the "website" folder.
 
 * Page Fixed Letter 1,2,3,4 & Random Speech 1,2: 
 
-    Press "Start" to start recording and "Stop" to stop recording.
+    For each webpage, press "Start" button to start recording and "Stop" button to stop recording.
     
     After recording, press "Download" button to save .wav files to "Data" folder.
 
