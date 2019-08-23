@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+
+  #service name
+  webserver:
+    image: 'bitnami/apache:latest'
+    ports:
+      - 8080:8080
+      - 8443:8443
+    volumes:
+      - ./website/:/app
+      - ./config/php.ini:/usr/local/etc/php/

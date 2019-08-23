@@ -1,0 +1,48 @@
+body {
+  padding-left: 12.5em;
+  font-family: Georgia, "Times New Roman",Times, serif;
+  /* color: purple; */
+  /* background-color: #d8da3d */
+ }
+pre{
+ 	white-space:pre-wrap;
+ }
+ul.navbar {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  top: 2em;
+  left: 1em;
+  width: 10em
+}
+h1 {
+  font-family: Helvetica, Geneva, Arial,
+        SunSans-Regular, sans-serif }
+ul.navbar li {
+  background: white;
+  margin: 0.5em 0;
+  padding: 0.3em;
+  border-right: 1em solid black }
+ul.navbar a {
+  text-decoration: none }
+a:link {
+  color: blue }
+a:visited {
+  color: purple }
+div.pd{
+  	padding:0 0 10px 0;
+}
+div.btns {
+	padding: 5px 10px;
+}
+div.intext {
+  font-size: 18px;
+}
+div.checkrule {
+	padding: 5px 10px;
+}
+.btnsc {
+  font-size: 20px;
+	padding: 5px 10px;
+}

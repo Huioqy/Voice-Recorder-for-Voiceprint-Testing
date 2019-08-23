@@ -1,0 +1,368 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>Voice Collection For Voiceprint Testing: Random Speech 2</title>
+<link rel="stylesheet" href="style.css">
+<script src="src/recorder-core.js"></script>
+<script src="src/extensions/waveview.js"></script>
+<script src="https://cdn.bootcss.com/jquery/1.9.1/jquery.min.js"></script>
+</head>
+
+<body onload="recopen()">
+<script>
+//兼容环境
+function BuildHtml(html,o,notEncode,loop){return o||(o={}),html=(null==html?"":html+"").replace(/\{(fn:)?(:)?(.+?)\}/gi,function(a,b,c,code){try{var v=eval(b?code:"o."+code);return v=void 0===v?"":v+"",c||notEncode?v:v}catch(e){return console.log("BuildHtml Fail",a+"\n"+e.stack),""}}),loop&&/\{(fn:)?(.+?)\}/.test(html)&&(html=BuildHtml(html,o,notEncode,loop)),html};
+function RandomKey(){
+	return "randomkey"+(RandomKey.idx++);
+};
+RandomKey.idx=0;
+</script>
+<!--Main code-->
+<div class="demoMain">
+	<!-- Navigator -->
+  <ul class="navbar">
+    <li><a href="index.html">Home Page</a>
+    <li><a href="Fixed1.html">Fixed Letter 1</a>
+    <li><a href="Fixed2.html">Fixed Letter 2</a>
+    <li><a href="Fixed3.html">Fixed Letter 3</a>
+    <li><a href="Fixed4.html">Fixed Letter 4</a>
+    <li><a href="Random1.html">Random Speech 1</a>
+    <li><a href="Random2.html">Random Speech 2</a>
+  </ul>
+	<h1>Voice Collection For Voiceprint Testing</h1>
+	<h3>Random Speech 2</h3>
+	<hr>
+	<div class="pd types">
+		Data Type:<label><input type="radio" name="type" value="wav" engine="wav" class="initType" checked>wav</label>
+	</div>
+	<div class="pd">
+		Text ID: <input type="text" class="textid" value="Random2">
+	</div>
+	<div class="pd">
+		Username: <input type="text" class="username" id="username">
+	</div>
+	<hr>
+	<div class="pd">
+	Please read the following paragraph confidently, for approximately <b>10 seconds</b>.
+	</div>
+	<div class="pd">
+	</div>
+	<font size="4.5">
+		<div class="pd">
+					Na coro rane iepareta: Bet run sedo tatecad ci to tiliri, ali ugerame ropit ibo sunetat emo dunan gumiyi dame sere:
+		</div>
+		<div class="pd">
+			Ulinener ceteyir leci zelier samatin tamatel gog hase. Pa reh ranopel yifar enonabir abafe: Red etamec sul uyer?
+		</div>
+	</font>
+	<div class="pd">
+	</div>
+	<hr>
+	</div>
+	<font size="4">
+	<div class="pd btns2">
+		Recording
+		<button onclick="recstart()">Start</button>
+		<button onclick="recstop()">Stop</button>
+		<span style="color:red">Click "Start" and read the sentences above. Click "Stop" when you finish.</span>
+	</div>
+	</font>
+	<div class="pd waveBox">
+		<div style="height:100px;width:300px;border:1px solid #ccc;box-sizing: border-box;display:inline-block" class="recwave"></div>
+		<input type="checkbox" class="recwaveSet" checked>
+	</div>
+
+	<hr>
+	<audio class="recPlay" style="width:100%"></audio>
+	<div class="reclog"></div>
+
+	<hr>
+	<div class="pd">
+	<a href="index.html">Back to Home Page</a>
+	</div>
+
+<script>
+function reclog(s){
+	$(".reclog").prepend('<div>['+new Date().toLocaleTimeString()+']'+s+'</div>');
+};
+$(window).bind("error",function(e){
+	reclog('<span style="color:red">【Error】:<pre>'+(e.error?e.error.stack:event.message)+'</pre></span>');
+});
+</script>
+
+<script>
+var username = localStorage.getItem('username');
+var rule = localStorage.getItem('rule');
+$("#username").attr("value",username);
+var rec;
+function recopen(){
+	var bit=16;
+	var sample=16000;
+	var type=$("[name=type]:checked").val();
+	var textid=$(".textid").val();
+	var username=$(".username").val();
+	var wave,waveSet=$(".recwaveSet")[0].checked;
+	rec=Recorder({
+		type:type
+		,bitRate:bit
+		,sampleRate:sample
+		,textid:textid
+		,username:username
+		,onProcess:function(buffers,level,time,sampleRate){
+			$(".recpowerx").css("width",level+"%");
+			$(".recpowert").html(time+"/"+level);
+
+			waveSet && wave.input(buffers[buffers.length-1],level,sampleRate);
+		}
+	});
+
+	dialogInt=setTimeout(function(){//定时8秒后打开弹窗，用于监测浏览器没有发起权限请求的情况，在open前放置定时器利于收到了回调能及时取消（不管open是同步还是异步回调的）
+		showDialog();
+	},8000);
+
+	rec.open(function(){
+		dialogCancel();
+		reclog("Recording Permission <span style='color:green'>Allow:</span> "+type+" "+bit+"kbps "+sample+"hz");
+
+		wave=Recorder.WaveView({elem:".recwave"});
+	},function(e,isUserNotAllow){
+		dialogCancel();
+		reclog((isUserNotAllow?"UserNotAllow，":"")+"打开失败："+e);
+	});
+
+	window.waitDialogClick=function(){
+		dialogCancel();
+		reclog("打开失败：权限请求被忽略，<span style='color:#f00'>用户主动点击的弹窗</span>");
+	};
+};
+
+//我们可以选择性的弹一个对话框：为了防止移动端浏览器存在第三种情况：用户忽略，并且（或者国产系统UC系）浏览器没有任何回调
+var showDialog=function(){
+	if(!/mobile/i.test(navigator.userAgent)){
+		return;//只在移动端开启没有权限请求的检测
+	};
+	dialogCancel();
+	$("body").append(''
+		+'<div class="waitDialog" style="z-index:99999;width:100%;height:100%;top:0;left:0;position:fixed;background:rgba(0,0,0,0.3);">'
+			+'<div style="display:flex;height:100%;align-items:center;">'
+				+'<div style="flex:1;"></div>'
+				+'<div style="width:240px;background:#fff;padding:15px 20px;border-radius: 10px;">'
+					+'<div style="padding-bottom:10px;">录音功能需要麦克风权限，请允许；如果未看到任何请求，请点击忽略~</div>'
+					+'<div style="text-align:center;"><a onclick="waitDialogClick()" style="color:#0B1">忽略</a></div>'
+				+'</div>'
+				+'<div style="flex:1;"></div>'
+			+'</div>'
+		+'</div>');
+};
+var dialogInt;
+var dialogCancel=function(){
+	clearTimeout(dialogInt);
+	$(".waitDialog").remove();
+};
+//弹框End
+
+function recclose(){
+	if(rec){
+		rec.close(function(){
+			reclog("已关闭");
+		});
+	}
+};
+
+function recstart(){
+	rec.set.username = $(".username").val();
+	if(rec && rec.set.username!="" && rule){
+		rec.start();
+		reclog("Recording...");
+	}
+	else {
+		reclog("<span style='color:red'>Please type in your UM-ID!!!</span>");
+	};
+};
+function recpause(){
+	if(rec){
+		rec.pause();
+		reclog("Stop recording");
+	};
+};
+function recresume(){
+	if(rec){
+		rec.resume();
+		reclog("Continue recording...");
+	};
+};
+var recblob={};
+function recstop(batCall){
+	if(rec){
+		if(!batCall){
+			reclog("Encoding "+rec.set.type+"...");
+		};
+		var t1=Date.now();
+		rec.stop(function(blob,time){
+			var id=RandomKey(16);
+			recblob[id]={blob:blob,set:$.extend({},rec.set),time:time};
+			reclog("<span style='color:green'>Recorded:</span> "+rec.set.username+"_"+rec.set.textid+"_"
+						+intp(time/1000,3)+"s_"+ new Date().toLocaleTimeString() +"_"+ new Date().toLocaleDateString() +"."+rec.set.type
+						+'<button onclick="recplay(\''+id+'\')">Play</button><button onclick="recdown(\''+id+'\')">Download</button>'
+						);
+			reclog("<font size='4'>If your voice sounds wonderful and you type your name correctly,"
+							+"please kindly click <span style='color:red'>'Download'</span>!</font>");
+			reclog("<font size='4'>Please <span style='color:red'>'Play'</span> your reording and check the qualify! </font>");
+
+			batCall&&batCall();
+		},function(s){
+			reclog("Fail："+s);
+			batCall&&batCall();
+		});
+	};
+};
+var intp=function(s,len){
+	s=s==null?"-":s+"";
+	if(s.length>=len)return s;
+	return ("_______"+s).substr(-len);
+};
+
+function recplay(key){
+	var audio=$(".recPlay")[0];
+	audio.controls=true;
+	if(!(audio.ended || audio.paused)){
+		audio.pause();
+	};
+
+	var o=recblob[key];
+	if(o){
+		o.play=(o.play||0)+1;
+		var logmsg=function(msg){
+			$(".p"+key).html('<span style="color:green">'+o.play+'</span> '+new Date().toLocaleTimeString()+" "+msg);
+		};
+		logmsg("");
+		audio.onerror=function(e){
+			console.log(arguments)
+			logmsg('<span style="color:red">播放失败</span>');
+		};
+
+		if(o.play2Name){
+			audio.src="assets/audio/"+o.play2Name;
+			audio.play();
+			return;
+		};
+		var end=function(blob){
+			audio.src=URL.createObjectURL(blob);
+			audio.play();
+		};
+		var wav=Recorder[o.set.type+"2wav"];
+		if(wav){
+			logmsg("正在转码成wav...");
+			wav(o.blob,function(blob){
+				end(blob);
+				logmsg("已转码成wav播放");
+			},function(msg){
+				logmsg("转码成wav失败："+msg);
+			});
+		}else{
+			end(o.blob);
+		};
+	};
+};
+
+function recdown(key){
+	var o=recblob[key];
+	if(o){
+		var cls=RandomKey(16);
+		var uploadfilename= o.set.username+"_"+o.set.textid+"_"+intp(o.time/1000,3)+"s_"+new Date().toLocaleTimeString()+"_"+new Date().toLocaleDateString()+"."+o.set.type;
+		o.down=(o.down||0)+1;
+		$(".d"+key).html('<span style="color:red">'+o.down+'</span> <span class="'+cls+'"> 没弹下载？试一下链接或复制文本<button onclick="recdown64(\''+key+'\',\''+cls+'\')">生成Base64文本</button></span>');
+		var downA=document.createElement("A");
+		downA.innerHTML="下载 "+uploadfilename;
+		downA.href=URL.createObjectURL(o.blob);
+		downA.download=uploadfilename;
+		$("."+cls).prepend(downA);
+		downA.click();
+	};
+};
+
+$(".recinfo").html(BuildHtml($(".tp_recinfo").html()));
+reclog("The browser <span style='color:"+(Recorder.Support()?"green'> supports recording.":"red'>does not support recording. Please use https and Safari for IOS!")+"</span>");
+reclog("WaveView Extensions are loaded");
+
+function goiframe(){
+	$(".demoHead").hide();
+	$(".demoMain").html(''
+		+'<div>IFrame测试，提示：`RecordApp测试`可以模拟跨域，跨域时未设置相应策略权限永远是拒绝的</div>'
+		+'<iframe src="?t='+Date.now()+'" style="width:98%;height:'+($(window).height()-100)+'px; border:4px solid #0B1"></iframe>');
+};
+if(window.top!=window){
+	var isSelf=false;
+	try{
+		window.top.aa=123;
+		isSelf=true;
+	}catch(e){};
+
+	reclog("<span style='color:#f60'>当前页面处在在iframe中，但故意未进行任何处理，"+(isSelf?"当前是同域":"并且已发生跨域，未设置相应策略权限永远是拒绝的")+"</span>");
+};
+</script>
+
+<script>
+$(function(){
+	var prev;
+	$(".types").bind("click",function(e){
+		var input=$(e.target);
+		if(input[0].nodeName=="LABEL"){
+			input=$(input).find("input");
+		};
+		if(prev!=input[0]){
+			prev=input[0];
+			loadEngine($(input));
+		};
+	});
+});
+function loadEngine(input){
+	if(input.length&&input[0].nodeName=="INPUT"){
+		var type=input.val();
+		var engines=input.attr("engine").split(",");
+		var end=function(){
+			var enc=Recorder.prototype["enc_"+type];
+			var tips=[!enc?"这个编码器无提示信息":type+"编码器"+(enc.stable?"稳定版":"beta版")+"，"+enc.testmsg];
+			tips.push('<div style="color:green">');
+			tips.push("【使用"+type+"录音需要加载的js文件】：");
+			tips.push("src/recorder-core.js, src/engine/");
+			tips.push(engines.join(".js, src/engine/"));
+			tips.push(".js</div>");
+			$(".typeTips").html(tips.join(""));
+		};
+		if(!Recorder.prototype[type]){
+			reclog(type+" encoder loading...");
+			var i=-1;
+			var load=function(){
+				i++;
+				if(i>=engines.length){
+					reclog(type+" encoder is ready.");
+					end();
+					return;
+				}
+				var elem=document.createElement("script");
+				elem.setAttribute("type","text/javascript");
+				elem.setAttribute("src","src/engine/"+engines[i]+".js");
+				elem.onload=function(){
+					load();
+				};
+				$("head")[0].appendChild(elem);
+			};
+			load();
+		}else{
+			end();
+		};
+	};
+};
+loadEngine($(".initType"));
+
+//pcm测试页面来的
+if(/ispcm=1/.test(location.href)){
+	$(".demoHead,.gitUrl,.btns,.recpower,.waveBox").hide();
+};
+</script>
+
+</body>
+</html>
