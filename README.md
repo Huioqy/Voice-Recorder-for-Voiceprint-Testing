@@ -2,7 +2,7 @@
 
 Docker: 2.1.0.0(36874)
 
-## Docker Installing
+## Install Docker
 
 https://www.docker.com/products/docker-desktop
 
