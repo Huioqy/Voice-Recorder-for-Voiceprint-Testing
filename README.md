@@ -8,7 +8,7 @@ https://www.docker.com/products/docker-desktop
 
 ## Run the Voice Recorder Website
 
-Use Terminal (or cmd on Windows) and cd to the root path of this folder.
+Use Terminal (or Powershell on Windows 10) and cd to the root path of this folder.
 
         docker-compose up
 
