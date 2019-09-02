@@ -6,6 +6,10 @@ Docker: 2.1.0.0(36874)
 
 https://www.docker.com/products/docker-desktop
 
+## Docker shared Drives setting
+
+Edit the "Settings" of docker: Add the local Drives where this package files are put.
+
 ## Run the Voice Recorder Website
 
 Use Terminal (or Powershell on Windows 10) and cd to the root path of this folder.
