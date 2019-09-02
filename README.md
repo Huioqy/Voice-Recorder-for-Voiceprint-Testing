@@ -6,9 +6,11 @@ Docker: 2.1.0.0(36874)
 
 https://www.docker.com/products/docker-desktop
 
+Run in linux container mode. No need to "click" windows containers during installation.
+
 ## Docker shared Drives setting
 
-Edit the "Settings" of docker: Add the local Drives where this package files are put.
+Edit the "Settings" of docker at the bottom right of the screen: Add the local Drives where this package files are put.
 
 ## Run the Voice Recorder Website
 
@@ -16,7 +18,7 @@ Use Terminal (or Powershell on Windows 10) and cd to the root path of this folde
 
         docker-compose up
 
-Then use Chrome to browse https://0.0.0.0:8443.
+Then use Chrome to browse https://localhost:8443 or https://0.0.0.0:8443.
 
 The code of the webpage is in the "website" folder.
 
