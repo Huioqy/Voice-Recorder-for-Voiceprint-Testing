@@ -8,11 +8,15 @@ https://www.docker.com/products/docker-desktop
 
 Run in linux container mode. No need to "click" windows containers during installation.
 
+After installation and restart, so warning about Hyper-V and docker contatiners will pop up.
+
+Just click "OK" to restart the computer again.
+
 ## Docker shared Drives setting
 
 Edit the "Settings" of docker at the bottom right of the screen: Add the local Drives where this package files are put.
 
-## Run the Voice Recorder Website
+## Run the Voice Recorder Website (Apache Server in Docker)
 
 Use Terminal (or Powershell on Windows 10) and cd to the root path of this folder.
 
